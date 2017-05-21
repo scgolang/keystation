@@ -45,10 +45,13 @@ func main() {
 		log.Fatal(err)
 	}
 	for pkt := range packets {
+		if pkt.Err != nil {
+			log.Fatal(pkt.Err)
+		}
 		ctls := map[string]float32{
-			"amp":  float32(pkt[2]) / float32(127),
+			"amp":  float32(pkt.Data[2]) / float32(127),
 			"dur":  float32(2),
-			"fund": sc.Midicps(float32(pkt[1])),
+			"fund": sc.Midicps(float32(pkt.Data[1])),
 		}
 		id := client.NextSynthID()
 		if _, err := group.Synth("bells", id, sc.AddToTail, ctls); err != nil {
